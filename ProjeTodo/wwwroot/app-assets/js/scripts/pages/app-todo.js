@@ -21,7 +21,7 @@ $.getJSON('home/gettodos', function (r) {
         }
         todoList.push(todoObj);
         //console.log(todoObj);
-        
+
     }
     init();
 })
@@ -34,49 +34,53 @@ function init() {
     function Listele() {
         todoTaskList = $('.todo-task-list');
         $(todoTaskList).empty();
-        for (todoObj of todoList) { 
-        var todoDone;
-        var todoDoneClass = "";
-        if (todoObj.isDone) { todoDone = "checked=\"\""; todoDoneClass = "completed"; }
-        else { todoDone = " " }
-        //console.log(todoDone);
-        $(todoTaskList).prepend(
-            '<li class="todo-item ' +
-            todoDoneClass +
-            '"> <div class="todo-title-wrapper">' +
-            '<div class="todo-title-area">' +
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-more-vertical drag-icon\"><circle cx=\"12\" cy=\"12\" r=\"1\"></circle><circle cx=\"12\" cy=\"5\" r=\"1\"></circle><circle cx=\"12\" cy=\"19\" r=\"1\"></circle></svg>" +
-            '<div class="title-wrapper">' +
-            '<div class="form-check">' +
-            '<input type="checkbox" class="form-check-input" id="customCheck" ' +
-            todoDone +
-            '" />' +
-            '<label class="form-check-label" for="customCheck' +
-            todoDone +
-            '"></label>' +
-            '</div>' +
-            '<span class="todo-title">' +
-            todoObj.title +
-            '</span>' +
-            '</div>' +
-            '</div>' +
-            '<div class="todo-item-action">' +
-            '<div class="badge-wrapper me-1">' +
-            "<span class=\"badge rounded - pill badge - light - primary\">Team</span>" +
-            '</div>' +
-            '<small class="text-nowrap text-muted me-1">' +
-            todoObj.date +
-            '</small>' +
-            '<div class="avatar">' +
-            '<img src="' +
-            "../../../app-assets/images/portrait/small/avatar-s-4.jpg" +
-            '" alt="' +
-            "user-avatar" +
-            '" height="28" width="28">' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</li>'
+        for (todoObj of todoList) {
+            var todoDone;
+            var todoDoneClass = "";
+            if (todoObj.isDone) { todoDone = "checked=\"\""; todoDoneClass = "completed"; }
+            else { todoDone = " " }
+            //console.log(todoDone);
+            $(todoTaskList).prepend(
+                '<li class="todo-item ' +
+                todoDoneClass +
+                '"> <div class="todo-title-wrapper">' +
+                '<div class="todo-title-area">' +
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-more-vertical drag-icon\"><circle cx=\"12\" cy=\"12\" r=\"1\"></circle><circle cx=\"12\" cy=\"5\" r=\"1\"></circle><circle cx=\"12\" cy=\"19\" r=\"1\"></circle></svg>" +
+                '<div class="title-wrapper">' +
+                '<div class="form-check">' +
+                '<input type="checkbox" class="form-check-input" id="id' +
+                todoObj.id + ' " ' +
+                todoDone +
+                '" />' +
+                '<label class="form-check-label" for="id' +
+                todoObj.id +
+                '"></label>' +
+                '</div>' +
+                '<span hidden class="todo-id">' +
+                todoObj.id +
+                '</span>' +
+                '<span class="todo-title">' +
+                todoObj.title +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '<div class="todo-item-action">' +
+                '<div class="badge-wrapper me-1">' +
+                "<span class=\"badge rounded - pill badge - light - primary\">Team</span>" +
+                '</div>' +
+                '<small class="text-nowrap text-muted me-1">' +
+                todoObj.date +
+                '</small>' +
+                '<div class="avatar">' +
+                '<img src="' +
+                "../../../app-assets/images/portrait/small/avatar-s-4.jpg" +
+                '" alt="' +
+                "user-avatar" +
+                '" height="28" width="28">' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</li>'
             );
         }
     }
@@ -97,6 +101,7 @@ function init() {
             addTaskBtn = $('.add-task button'),
             updateTodoItem = $('.update-todo-item'),
             updateBtns = $('.update-btn'),
+            deleteBtns = $('.delete-btn'),
             taskDesc = $('#task-desc'),
             taskAssignSelect = $('#task-assigned'),
             taskTag = $('#task-tag'),
@@ -265,6 +270,7 @@ function init() {
             addTaskBtn.on('click', function (e) {
                 addBtn.removeClass('d-none');
                 updateBtns.addClass('d-none');
+                deleteBtns.addClass('d-none');
                 modalTitle.text('Add Task');
                 // newTaskModal.modal('show');
                 sidebarLeft.removeClass('show');
@@ -419,6 +425,7 @@ function init() {
             newTaskModal.modal('show');
             addBtn.addClass('d-none');
             updateBtns.removeClass('d-none');
+            deleteBtns.removeClass('d-none');
             if ($(this).hasClass('completed')) {
                 modalTitle.html(
                     '<button type="button" class="btn btn-sm btn-outline-success complete-todo-item waves-effect waves-float waves-light" data-bs-dismiss="modal">Completed</button>'
@@ -428,105 +435,153 @@ function init() {
                     '<button type="button" class="btn btn-sm btn-outline-secondary complete-todo-item waves-effect waves-float waves-light" data-bs-dismiss="modal">Mark Complete</button>'
                 );
             }
+            var id = $(this).find('.todo-id').html();
+            var link = "/home/gettodobyid?id=" + id;
+
+            $.getJSON(link, function (r) {
+                todo = r;
+                //$('.loading').remove();
+                //console.log(todo);
+                var todoObj = {
+                    id: todo.id,
+                    title: todo.title,
+                    description: todo.description,
+                    date: todo.updatedOn,
+                    isDone: todo.isDone
+
+                }
+                //console.log(todoObj);
+
+                quill_editor[0].innerHTML = todoObj.description;
+                console.log($('#todoId'));
+                $('#todoId').text(todoObj.id);
+
+                flatPickr.flatpickr({
+                    dateFormat: 'Y-m-d',
+                    defaultDate: todoObj.date,
+                    onReady: function (selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    }
+                });
+                //init();
+            })
+
+            //console.log(todoObj);
+
             taskTag.val('').trigger('change');
             var quill_editor = $('#task-desc .ql-editor'); // ? Dummy data as not connected with API or anything else
-            quill_editor[0].innerHTML =
-                'Random bisey Chocolate cake topping bonbon jujubes donut sweet wafer. Marzipan gingerbread powder brownie bear claw. Chocolate bonbon sesame snaps jelly caramels oat cake.';
             taskTitle = $(this).find('.todo-title');
             var $title = $(this).find('.todo-title').html();
 
             // apply all variable values to fields
             newTaskForm.find('.new-todo-item-title').val($title);
         });
+        deleteBtns.on('click', function (e) {
+            e.preventDefault();
+            var id = $('#todoId').text();
+            console.log(id);
+            $.post("/home/deletetodo", { id });
 
-        // Updating Data Values to Fields
-        if (updateTodoItem.length) {
-            updateTodoItem.on('click', function (e) {
-                var isValid = newTaskForm.valid();
-                e.preventDefault();
-                if (isValid) {
-                    var $edit_title = newTaskForm.find('.new-todo-item-title').val();
-                    $(taskTitle).text($edit_title);
+        
 
-                    toastr['success']('Data Saved', '💾 Task Action!', {
-                        closeButton: true,
-                        tapToDismiss: false,
-                        rtl: isRtl
-                    });
-                    $(newTaskModal).modal('hide');
-                }
-            });
-        }
+        toastr['success']('Data Deleted', '💾 Task Action!', {
+            closeButton: true,
+            tapToDismiss: false,
+            rtl: isRtl
+        });
+        $(newTaskModal).modal('hide');
 
-        // Sort Ascending
-        if (sortAsc.length) {
-            sortAsc.on('click', function () {
-                todoTaskListWrapper
-                    .find('li')
-                    .sort(function (a, b) {
-                        return $(b).find('.todo-title').text().toUpperCase() < $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
-                    })
-                    .appendTo(todoTaskList);
-            });
-        }
-        // Sort Descending
-        if (sortDesc.length) {
-            sortDesc.on('click', function () {
-                todoTaskListWrapper
-                    .find('li')
-                    .sort(function (a, b) {
-                        return $(b).find('.todo-title').text().toUpperCase() > $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
-                    })
-                    .appendTo(todoTaskList);
-            });
-        }
+    });
+    // Updating Data Values to Fields
+    if (updateTodoItem.length) {
+        updateTodoItem.on('click', function (e) {
+            var isValid = newTaskForm.valid();
+            e.preventDefault();
+            if (isValid) {
+                var $edit_title = newTaskForm.find('.new-todo-item-title').val();
+                $(taskTitle).text($edit_title);
 
-        // Filter task
-        if (todoFilter.length) {
-            todoFilter.on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                if (value !== '') {
-                    $('.todo-item').filter(function () {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                    });
-                    var tbl_row = $('.todo-item:visible').length; //here tbl_test is table name
+                toastr['success']('Data Saved', '💾 Task Action!', {
+                    closeButton: true,
+                    tapToDismiss: false,
+                    rtl: isRtl
+                });
+                $(newTaskModal).modal('hide');
+            }
+        });
+    }
 
-                    //Check if table has row or not
-                    if (tbl_row == 0) {
-                        if (!$(noResults).hasClass('show')) {
-                            $(noResults).addClass('show');
-                        }
-                    } else {
-                        $(noResults).removeClass('show');
+    // Sort Ascending
+    if (sortAsc.length) {
+        sortAsc.on('click', function () {
+            todoTaskListWrapper
+                .find('li')
+                .sort(function (a, b) {
+                    return $(b).find('.todo-title').text().toUpperCase() < $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
+                })
+                .appendTo(todoTaskList);
+        });
+    }
+    // Sort Descending
+    if (sortDesc.length) {
+        sortDesc.on('click', function () {
+            todoTaskListWrapper
+                .find('li')
+                .sort(function (a, b) {
+                    return $(b).find('.todo-title').text().toUpperCase() > $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
+                })
+                .appendTo(todoTaskList);
+        });
+    }
+
+    // Filter task
+    if (todoFilter.length) {
+        todoFilter.on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            if (value !== '') {
+                $('.todo-item').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+                var tbl_row = $('.todo-item:visible').length; //here tbl_test is table name
+
+                //Check if table has row or not
+                if (tbl_row == 0) {
+                    if (!$(noResults).hasClass('show')) {
+                        $(noResults).addClass('show');
                     }
                 } else {
-                    // If filter box is empty
-                    $('.todo-item').show();
-                    if ($(noResults).hasClass('show')) {
-                        $(noResults).removeClass('show');
-                    }
+                    $(noResults).removeClass('show');
                 }
-            });
-        }
-
-        // For chat sidebar on small screen
-        if ($(window).width() > 992) {
-            if (overlay.hasClass('show')) {
-                overlay.removeClass('show');
+            } else {
+                // If filter box is empty
+                $('.todo-item').show();
+                if ($(noResults).hasClass('show')) {
+                    $(noResults).removeClass('show');
+                }
             }
-        }
-    });
+        });
+    }
 
-    $(window).on('resize', function () {
-        // remove show classes from sidebar and overlay if size is > 992
-        if ($(window).width() > 992) {
-            if ($('.body-content-overlay').hasClass('show')) {
-                $('.sidebar-left').removeClass('show');
-                $('.body-content-overlay').removeClass('show');
-                $('.sidebar-todo-modal').modal('hide');
-            }
+    // For chat sidebar on small screen
+    if ($(window).width() > 992) {
+        if (overlay.hasClass('show')) {
+            overlay.removeClass('show');
         }
-    });
+    }
+});
+
+$(window).on('resize', function () {
+    // remove show classes from sidebar and overlay if size is > 992
+    if ($(window).width() > 992) {
+        if ($('.body-content-overlay').hasClass('show')) {
+            $('.sidebar-left').removeClass('show');
+            $('.body-content-overlay').removeClass('show');
+            $('.sidebar-todo-modal').modal('hide');
+        }
+    }
+});
 
 
 

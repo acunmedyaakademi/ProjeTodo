@@ -45,7 +45,30 @@ namespace ProjeTodo.DataAccess.Concrete
 
         public bool DeleteTodo(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection connection = new SqlConnection(ConnectionString.ConnectionValue))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = new SqlCommand(
+                            "DELETE FROM todos WHERE id = @id",
+                            connection);
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    command.ExecuteNonQuery();
+
+
+                    return true;
+
+                }
+                catch (Exception e)
+                {
+
+                    return false;
+                }
+            }
         }
 
         public List<TodoList> GetAllTodos()
@@ -86,7 +109,42 @@ namespace ProjeTodo.DataAccess.Concrete
 
         public Todo GetById(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection connection = new SqlConnection(ConnectionString.ConnectionValue))
+            {
+                try
+                {
+
+                    connection.Open();
+
+                    var command = new SqlCommand(
+                            "SELECT id, title, description, is_done, remind_on, finish_on, created_on, updated_on, is_active FROM todos where is_active = 1 and id = @id ", connection);
+                   
+                    command.Parameters.AddWithValue("@id", id);
+                   
+                    var reader = command.ExecuteReader();
+
+                    reader.Read();
+                    Todo todo = new();
+                    todo.ID = reader.GetInt32(0);
+                    todo.Title = reader.GetString(1);
+                    todo.Description = reader.GetString(2);
+                    todo.IsDone = reader.GetBoolean(3);
+                    //todo.RemindOn = reader.GetDateTime(4);
+                    //todo.FinishOn = reader.GetDateTime(5);
+                    todo.CreatedOn = reader.GetDateTime(6);
+                    todo.UpdatedOn = reader.GetDateTime(7);
+                    todo.IsActive = reader.GetBoolean(8);
+
+                   
+                    return todo;
+
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+
         }
 
         public List<Todo> GetUserTodos(int userID)
