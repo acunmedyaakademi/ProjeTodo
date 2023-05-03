@@ -52,22 +52,19 @@ namespace ProjeTodo.DataAccess.Concrete
                     connection.Open();
 
                     var command = new SqlCommand(
-                            "DELETE FROM todos WHERE id = @id",
-                            connection);
+                            "UPDATE todos SET is_active = 0 where id = @id and is_active = 1 ", connection);
 
                     command.Parameters.AddWithValue("@id", id);
-
                     command.ExecuteNonQuery();
-
 
                     return true;
 
                 }
                 catch (Exception e)
                 {
-
                     return false;
                 }
+
             }
         }
 

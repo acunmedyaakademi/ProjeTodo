@@ -433,11 +433,11 @@ function init() {
             deleteBtns.removeClass('d-none');
             if ($(this).hasClass('completed')) {
                 modalTitle.html(
-                    '<button type="button" class="btn btn-sm btn-outline-success complete-todo-item waves-effect waves-float waves-light" data-bs-dismiss="modal">Completed</button>'
+                    '<button type="button" class="btn btn-sm btn-outline-success completed-todo-item waves-effect waves-float waves-light" data-bs-dismiss="modal">Completed</button>'
                 );
             } else {
                 modalTitle.html(
-                    '<button type="button" class="btn btn-sm btn-outline-secondary complete-todo-item waves-effect waves-float waves-light" data-bs-dismiss="modal">Mark Complete</button>'
+                    '<button type="button" class="btn btn-sm btn-outline-secondary markcomplete-todo-item waves-effect waves-float waves-light" data-bs-dismiss="modal">Mark Complete</button>'
                 );
             }
             var id = $(this).find('.todo-id').html();
