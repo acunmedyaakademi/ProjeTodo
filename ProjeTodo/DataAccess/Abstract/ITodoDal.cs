@@ -11,5 +11,7 @@ namespace ProjeTodo.DataAccess.Abstract
         List<TodoList> GetAllTodos();
         List<Todo> GetUserTodos(int userID);
         Todo GetById(int id);
+        bool DoneTodo(int id);
+        bool UndoneTodo(int id);
     }
 }

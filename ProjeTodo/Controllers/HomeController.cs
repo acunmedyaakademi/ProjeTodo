@@ -46,5 +46,19 @@ namespace ProjeTodo.Controllers
             _todoDal.UpdateTodo(todo);
             return Json("true");
         }
+
+        [HttpPost]
+        public IActionResult DoneTodo(int id)
+        {
+            _todoDal.DoneTodo(id); 
+            return Json("true");
+        }
+
+        [HttpPost]
+        public IActionResult UndoneTodo(int id)
+        {
+            _todoDal.UndoneTodo(id);
+            return Json("true");
+        }
     }
 }

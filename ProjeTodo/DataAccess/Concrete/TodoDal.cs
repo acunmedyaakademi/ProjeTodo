@@ -71,6 +71,31 @@ namespace ProjeTodo.DataAccess.Concrete
             }
         }
 
+        public bool DoneTodo(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString.ConnectionValue))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = new SqlCommand(
+                            "UPDATE todos SET is_done = 1 where id = @id and is_active = 1 ", connection);
+
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+
+                    return true;
+
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+
+            }
+        }
+
         public List<TodoList> GetAllTodos()
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString.ConnectionValue))
@@ -150,6 +175,31 @@ namespace ProjeTodo.DataAccess.Concrete
         public List<Todo> GetUserTodos(int userID)
         {
             throw new NotImplementedException();
+        }
+
+        public bool UndoneTodo(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString.ConnectionValue))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = new SqlCommand(
+                            "UPDATE todos SET is_done = 0 where id = @id and is_active = 1 ", connection);
+
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+
+                    return true;
+
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+
+            }
         }
 
         public bool UpdateTodo(UpdateTodo todo)

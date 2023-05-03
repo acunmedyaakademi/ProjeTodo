@@ -405,8 +405,12 @@ function init() {
         // Task checkbox change
         todoTaskListWrapper.on('change', '.form-check', function (event) {
             var $this = $(this).find('input');
+            var id = $(this).parent().find('.todo-id').html();
             if ($this.prop('checked')) {
                 $this.closest('.todo-item').addClass('completed');
+
+                $.post("/home/donetodo", { id });
+
                 toastr['success']('Task Completed', 'Congratulations!! 🎉', {
                     closeButton: true,
                     tapToDismiss: false,
@@ -414,6 +418,7 @@ function init() {
                 });
             } else {
                 $this.closest('.todo-item').removeClass('completed');
+                $.post("/home/undonetodo", { id });
             }
         });
         todoTaskListWrapper.on('click', '.form-check', function (event) {
