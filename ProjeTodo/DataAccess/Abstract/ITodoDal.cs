@@ -6,7 +6,7 @@ namespace ProjeTodo.DataAccess.Abstract
     public interface ITodoDal
     {
         bool AddTodo(AddTodo todo);
-        bool Updater(Todo todo);
+        bool UpdateTodo(UpdateTodo todo);
         bool DeleteTodo(int id);
         List<TodoList> GetAllTodos();
         List<Todo> GetUserTodos(int userID);

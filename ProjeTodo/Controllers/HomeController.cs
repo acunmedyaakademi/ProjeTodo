@@ -39,5 +39,12 @@ namespace ProjeTodo.Controllers
             _todoDal.DeleteTodo(id);
             return Json("true");
         }
+
+        [HttpPost]
+        public IActionResult UpdateTodo(UpdateTodo todo)
+        {
+            _todoDal.UpdateTodo(todo);
+            return Json("true");
+        }
     }
 }

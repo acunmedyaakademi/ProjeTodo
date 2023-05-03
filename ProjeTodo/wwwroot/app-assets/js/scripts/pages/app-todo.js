@@ -484,24 +484,28 @@ function init() {
             console.log(id);
             $.post("/home/deletetodo", { id });
 
-        
 
-        toastr['success']('Data Deleted', '💾 Task Action!', {
-            closeButton: true,
-            tapToDismiss: false,
-            rtl: isRtl
+
+            toastr['success']('Data Deleted', '💾 Task Action!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+            });
+            $(newTaskModal).modal('hide');
+
         });
-        $(newTaskModal).modal('hide');
+        // Updating Data Values to Fields
+        if (updateTodoItem.length) {
+            updateTodoItem.on('click', function (e) {
 
-    });
-    // Updating Data Values to Fields
-    if (updateTodoItem.length) {
-        updateTodoItem.on('click', function (e) {
-            var isValid = newTaskForm.valid();
-            e.preventDefault();
-            if (isValid) {
-                var $edit_title = newTaskForm.find('.new-todo-item-title').val();
-                $(taskTitle).text($edit_title);
+                e.preventDefault();
+
+                var title = newTaskForm.find('.new-todo-item-title').val();
+                $(taskTitle).text(title);
+                var id = $('#todoId').text();
+                var description = $('#task-desc .ql-editor p');
+                description = description[0].innerHTML;
+                $.post("/home/updatetodo", { id, title, description });
 
                 toastr['success']('Data Saved', '💾 Task Action!', {
                     closeButton: true,
@@ -509,79 +513,79 @@ function init() {
                     rtl: isRtl
                 });
                 $(newTaskModal).modal('hide');
-            }
-        });
-    }
 
-    // Sort Ascending
-    if (sortAsc.length) {
-        sortAsc.on('click', function () {
-            todoTaskListWrapper
-                .find('li')
-                .sort(function (a, b) {
-                    return $(b).find('.todo-title').text().toUpperCase() < $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
-                })
-                .appendTo(todoTaskList);
-        });
-    }
-    // Sort Descending
-    if (sortDesc.length) {
-        sortDesc.on('click', function () {
-            todoTaskListWrapper
-                .find('li')
-                .sort(function (a, b) {
-                    return $(b).find('.todo-title').text().toUpperCase() > $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
-                })
-                .appendTo(todoTaskList);
-        });
-    }
+            });
+        }
 
-    // Filter task
-    if (todoFilter.length) {
-        todoFilter.on('keyup', function () {
-            var value = $(this).val().toLowerCase();
-            if (value !== '') {
-                $('.todo-item').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-                var tbl_row = $('.todo-item:visible').length; //here tbl_test is table name
+        // Sort Ascending
+        if (sortAsc.length) {
+            sortAsc.on('click', function () {
+                todoTaskListWrapper
+                    .find('li')
+                    .sort(function (a, b) {
+                        return $(b).find('.todo-title').text().toUpperCase() < $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
+                    })
+                    .appendTo(todoTaskList);
+            });
+        }
+        // Sort Descending
+        if (sortDesc.length) {
+            sortDesc.on('click', function () {
+                todoTaskListWrapper
+                    .find('li')
+                    .sort(function (a, b) {
+                        return $(b).find('.todo-title').text().toUpperCase() > $(a).find('.todo-title').text().toUpperCase() ? 1 : -1;
+                    })
+                    .appendTo(todoTaskList);
+            });
+        }
 
-                //Check if table has row or not
-                if (tbl_row == 0) {
-                    if (!$(noResults).hasClass('show')) {
-                        $(noResults).addClass('show');
+        // Filter task
+        if (todoFilter.length) {
+            todoFilter.on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                if (value !== '') {
+                    $('.todo-item').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                    });
+                    var tbl_row = $('.todo-item:visible').length; //here tbl_test is table name
+
+                    //Check if table has row or not
+                    if (tbl_row == 0) {
+                        if (!$(noResults).hasClass('show')) {
+                            $(noResults).addClass('show');
+                        }
+                    } else {
+                        $(noResults).removeClass('show');
                     }
                 } else {
-                    $(noResults).removeClass('show');
+                    // If filter box is empty
+                    $('.todo-item').show();
+                    if ($(noResults).hasClass('show')) {
+                        $(noResults).removeClass('show');
+                    }
                 }
-            } else {
-                // If filter box is empty
-                $('.todo-item').show();
-                if ($(noResults).hasClass('show')) {
-                    $(noResults).removeClass('show');
-                }
+            });
+        }
+
+        // For chat sidebar on small screen
+        if ($(window).width() > 992) {
+            if (overlay.hasClass('show')) {
+                overlay.removeClass('show');
             }
-        });
-    }
-
-    // For chat sidebar on small screen
-    if ($(window).width() > 992) {
-        if (overlay.hasClass('show')) {
-            overlay.removeClass('show');
         }
-    }
-});
+    });
 
-$(window).on('resize', function () {
-    // remove show classes from sidebar and overlay if size is > 992
-    if ($(window).width() > 992) {
-        if ($('.body-content-overlay').hasClass('show')) {
-            $('.sidebar-left').removeClass('show');
-            $('.body-content-overlay').removeClass('show');
-            $('.sidebar-todo-modal').modal('hide');
+    $(window).on('resize', function () {
+        // remove show classes from sidebar and overlay if size is > 992
+        if ($(window).width() > 992) {
+            if ($('.body-content-overlay').hasClass('show')) {
+                $('.sidebar-left').removeClass('show');
+                $('.body-content-overlay').removeClass('show');
+                $('.sidebar-todo-modal').modal('hide');
+            }
         }
-    }
-});
+    });
 
 
 
